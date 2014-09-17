@@ -69,6 +69,7 @@ module SalesforceBulk
     end
 
     def add_batch()
+      binding.pry
       keys = @@records.first.keys
 
       output_csv = keys.to_csv
