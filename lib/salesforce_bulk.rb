@@ -25,6 +25,7 @@ module SalesforceBulk
 
     def create(sobject, records, wait=false, additional_info = {})
       puts "CREATING RECORDS"
+      binding.pry
       self.do_operation('insert', sobject, records, nil, wait, additional_info)
     end
 
