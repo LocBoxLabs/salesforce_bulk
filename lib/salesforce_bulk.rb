@@ -50,6 +50,7 @@ module SalesforceBulk
       job.close_job()
 
       if wait or operation == 'query'
+        binding.pry
         while true
           state = job.check_batch_status()
           if state != "Queued" && state != "InProgress"

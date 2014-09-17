@@ -87,6 +87,7 @@ module SalesforceBulk
       path = "job/#{@@job_id}/batch/"
       headers = Hash["Content-Type" => "text/csv; charset=UTF-8"]
 
+      binding.pry
       response = @@connection.post_xml(nil, path, output_csv, headers)
       response_parsed = XmlSimple.xml_in(response)
 
