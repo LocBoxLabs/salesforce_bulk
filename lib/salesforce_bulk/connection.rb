@@ -36,7 +36,7 @@ module SalesforceBulk
       xml += "    </n1:login>"
       xml += "  </env:Body>"
       xml += "</env:Envelope>"
-      
+
       headers = Hash['Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login']
 
       response = post_xml(@@LOGIN_HOST, @@LOGIN_PATH, xml, headers)
@@ -96,11 +96,12 @@ module SalesforceBulk
     end
 
     def parse_response response
+      binding.pry
       response_parsed = XmlSimple.xml_in(response)
 
       if response.downcase.include?("faultstring") || response.downcase.include?("exceptionmessage")
         begin
-          
+
           if response.downcase.include?("faultstring")
             error_message = response_parsed["Body"][0]["Fault"][0]["faultstring"][0]
           elsif response.downcase.include?("exceptionmessage")
