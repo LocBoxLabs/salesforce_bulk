@@ -15,29 +15,29 @@ module SalesforceBulk
       @connection = SalesforceBulk::Connection.new(username, password, @@SALESFORCE_API_VERSION, in_sandbox)
     end
 
-    def upsert(sobject, records, external_field, wait=false)
-      self.do_operation('upsert', sobject, records, external_field, wait)
+    def upsert(sobject, records, external_field, wait=false, additional_info = {})
+      self.do_operation('upsert', sobject, records, external_field, wait, additional_info)
     end
 
-    def update(sobject, records, wait=false)
-      self.do_operation('update', sobject, records, nil, wait)
+    def update(sobject, records, wait=false, additional_info = {})
+      self.do_operation('update', sobject, records, nil, wait, additional_info)
     end
 
-    def create(sobject, records, wait=false)
+    def create(sobject, records, wait=false, additional_info = {})
       puts "CREATING RECORDS"
-      self.do_operation('insert', sobject, records, nil, wait)
+      self.do_operation('insert', sobject, records, nil, wait, additional_info)
     end
 
-    def delete(sobject, records, wait=false)
-      self.do_operation('delete', sobject, records, nil, wait)
+    def delete(sobject, records, wait=false, additional_info = {})
+      self.do_operation('delete', sobject, records, nil, wait, additional_info)
     end
 
     def query(sobject, query)
       self.do_operation('query', sobject, query, nil)
     end
 
-    def do_operation(operation, sobject, records, external_field, wait=false)
-      job = SalesforceBulk::Job.new(operation, sobject, records, external_field, @connection)
+    def do_operation(operation, sobject, records, external_field, wait=false, additional_info = {})
+      job = SalesforceBulk::Job.new(operation, sobject, records, external_field, @connection, additional_info)
 
       # TODO: put this in one function
       job_id = job.create_job()

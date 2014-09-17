@@ -4,13 +4,14 @@ module SalesforceBulk
 
     attr :result
 
-    def initialize(operation, sobject, records, external_field, connection)
+    def initialize(operation, sobject, records, external_field, connection, additional_info)
 
       @@operation = operation
       @@sobject = sobject
       @@external_field = external_field
       @@records = records
       @@connection = connection
+      @@additional_info = additional_info
       @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
 
       # @result = {"errors" => [], "success" => nil, "records" => [], "raw" => nil, "message" => 'The job has been queued.'}
@@ -25,12 +26,18 @@ module SalesforceBulk
       if !@@external_field.nil? # This only happens on upsert
         xml += "<externalIdFieldName>#{@@external_field}</externalIdFieldName>"
       end
+      if @@additional_info
+        @@additional_info.each do |key, value|
+          xml += "<#{key}>#{value}</#{key}>"
+        end
+      end
       xml += "<contentType>CSV</contentType>"
       xml += "</jobInfo>"
 
       path = "job"
       headers = Hash['Content-Type' => 'application/xml; charset=utf-8']
 
+      binding.pry
       response = @@connection.post_xml(nil, path, xml, headers)
       response_parsed = @@connection.parse_response response
 
@@ -54,7 +61,7 @@ module SalesforceBulk
     def add_query
       path = "job/#{@@job_id}/batch/"
       headers = Hash["Content-Type" => "text/csv; charset=UTF-8"]
-      
+
       response = @@connection.post_xml(nil, path, @@records, headers)
       response_parsed = XmlSimple.xml_in(response)
 
@@ -63,7 +70,7 @@ module SalesforceBulk
 
     def add_batch()
       keys = @@records.first.keys
-      
+
       output_csv = keys.to_csv
 
       @@records.each do |r|
@@ -78,7 +85,7 @@ module SalesforceBulk
 
       path = "job/#{@@job_id}/batch/"
       headers = Hash["Content-Type" => "text/csv; charset=UTF-8"]
-      
+
       response = @@connection.post_xml(nil, path, output_csv, headers)
       response_parsed = XmlSimple.xml_in(response)
 
@@ -115,7 +122,7 @@ module SalesforceBulk
         path = "job/#{@@job_id}/batch/#{@@batch_id}/result/#{result_id}"
         headers = Hash.new
         headers = Hash["Content-Type" => "text/xml; charset=UTF-8"]
-        
+
         response = @@connection.get_request(nil, path, headers)
 
       end
@@ -139,7 +146,7 @@ module SalesforceBulk
 
         @result.records.push row
         if row["Success"] == false
-          @result.success = false 
+          @result.success = false
           @result.errors.push({"#{index}" => row["Error"]}) if row["Error"]
         end
       end
