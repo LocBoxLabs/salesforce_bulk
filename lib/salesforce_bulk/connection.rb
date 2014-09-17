@@ -51,7 +51,7 @@ module SalesforceBulk
     end
 
     def post_xml(host, path, xml, headers)
-
+      binding.pry
       host = host || @@INSTANCE_HOST
 
       if host != @@LOGIN_HOST # Not login, need to add session id to header
@@ -59,7 +59,9 @@ module SalesforceBulk
         path = "#{@@PATH_PREFIX}#{path}"
       end
 
-      https(host).post(path, xml, headers).body
+      response = https(host).post(path, xml, headers).body
+      binding.pry
+      response
     end
 
     def get_request(host, path, headers)
