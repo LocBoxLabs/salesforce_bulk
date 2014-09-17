@@ -22,8 +22,9 @@ module SalesforceBulk
     def update(sobject, records, wait=false)
       self.do_operation('update', sobject, records, nil, wait)
     end
-    
+
     def create(sobject, records, wait=false)
+      puts "CREATING RECORDS"
       self.do_operation('insert', sobject, records, nil, wait)
     end
 
@@ -55,7 +56,7 @@ module SalesforceBulk
           end
           sleep(2) # wait x seconds and check again
         end
-        
+
         if state == 'Completed'
           job.get_batch_result()
           job
