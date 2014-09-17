@@ -36,9 +36,6 @@ module SalesforceBulk
 
       path = "job"
       headers = Hash['Content-Type' => 'application/xml; charset=utf-8']
-      headers["AssignmentRuleHeader"] = {
-        "assignmentRuleId" => "01QE0000000Q68yMAC"
-      }
 
       binding.pry
       response = @@connection.post_xml(nil, path, xml, headers)
